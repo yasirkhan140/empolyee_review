@@ -23,7 +23,7 @@ const userSchema = new Schema(
     assignedReviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "AssignedReview",
+        ref: "AssignReview",
       },
     ],
     myReviews: [

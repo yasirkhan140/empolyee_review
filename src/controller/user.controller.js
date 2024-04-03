@@ -3,11 +3,18 @@ import { User } from "../models/user.model.js";
 // admin home
 export const home = async (req, res) => {
   if (!req.user.isAdmin) {
-    let reviews = await MyReview.find({});
+    let reviews = await MyReview.find({
+      toUser: req.user._id,
+    });
+    for (let i = 0; i < reviews.length; i++) {
+      let user = await User.findById(reviews[i].fromUser);
+      reviews[i].userName = user.name;
+    }
     return res.render("userHome", {
       title: "Emplolyee Review",
       message: req.flash(),
       user: req.user,
+      reviews,
     });
   }
   // find all user and remove password and refreshToken

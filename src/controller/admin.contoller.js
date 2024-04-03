@@ -1,3 +1,4 @@
+import { MyReview } from "../models/myReview.model.js";
 import { User } from "../models/user.model.js";
 
 // update User to admin/user
@@ -14,11 +15,7 @@ export const updateUserAdmin = async (req, res) => {
       isAdmin: true,
     };
   }
-  const updateUser = await User.findByIdAndUpdate(
-    id,
-    { $set: filter },
-    { new: true }
-  );
+  await User.findByIdAndUpdate(id, { $set: filter }, { new: true });
   return res.redirect("back");
 };
 
@@ -85,4 +82,21 @@ export const updateEmployee = async (req, res) => {
     req.flash("errorMessage", "successfully update employee");
   }
   return res.redirect("/");
+};
+
+// myy reviews
+export const myReviews = async (req, res) => {
+  let reviews = await MyReview.find({
+    toUser: req.user._id,
+  });
+  for (let i = 0; i < reviews.length; i++) {
+    let user = await User.findById(reviews[i].fromUser);
+    reviews[i].userName = user.name;
+  }
+  return res.render("userHome", {
+    title: "Emplolyee Review",
+    message: req.flash(),
+    user: req.user,
+    reviews,
+  });
 };
